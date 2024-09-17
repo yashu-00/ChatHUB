@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Friends</title>
+    <link rel="stylesheet" href="../../public/add-friend.css">
+</head>
+
+<body>
+    <header>
+        <h1>Add Friends</h1>
+    </header>
+
+    <div class="friends-container">
+        <% if (users.length> 0) { %>
+            <% users.forEach(user=> { %>
+                <div class="user-item">
+                    <span class="user-name">@<%= user.user_name %></span>
+                    <button class="send-request-btn" data-user_name="<%= user.user_name %>">Send Request</button>
+                </div>
+                <% }) %>
+                    <% } else { %>
+                        <p class="no-users-message">No users available to add as friends.</p>
+                        <% } %>
+    </div>
+
+    <script>
+        document.querySelectorAll('.send-request-btn').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const friendUserName = event.target.dataset.user_name; // Access the data-user_name attribute
+                try {
+                    const response = await fetch('/search/api/friend-request', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ friendUserName }) // Send the username in the request body
+                    });
+                    if (response.ok) {
+                        const result = await response.json();
+
+                        // If the result indicates the request was already sent
+                        if (result.status === 400) {
+                            alert('Friend request already sent.');
+                        } else if(result.status === 200) {
+                            alert('Friend request sent successfully!');
+                        }
+                    } else {
+                        alert('Error sending friend request.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

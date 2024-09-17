@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="../../public/profile.css">
+    <!-- Link to Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-user-circle"></i> User Profile</h1>
+        <nav>
+            <a href="/users/friends"><i class="fas fa-arrow-left"></i> Back to Friends</a>
+        </nav>
+    </header>
+
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <% if (user.image) { %>
+                    <img src="/uploads/<%= user.image %>" alt="<%= user.name %>'s profile picture" class="avatar-image">
+                <% } else { %>
+                    <div class="avatar-circle">
+                        <span class="initials">
+                            <%= user.name.charAt(0).toUpperCase() %>
+                        </span>
+                    </div>
+                <% } %>
+            </div>
+            <div class="profile-info">
+                <h2>
+                    <%= user.name.toUpperCase() %>
+                </h2>
+                <p><i class="fas fa-user"></i> <strong>Username:</strong> @<%= user.user_name %>
+                </p>
+                <p><i class="fas fa-envelope"></i> <strong>Email:</strong>
+                    <%= user.email %>
+                </p>
+                <p><i class="fas fa-phone"></i> <strong>Phone Number:</strong>
+                    <%= user.number %>
+                </p>
+            </div>
+            <!-- Edit Button -->
+            <a href="/users/editProfile" class="edit-btn"><i class="fas fa-edit"></i> Edit Profile</a>
+        </div>
+        <!-- Transaction Button -->
+        <button id="transaction-btn"><i class="fas fa-money-check-alt"></i> View Transactions</button>
+        <!-- Log Out Button -->
+        <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+    </div>
+
+    <!-- Link to External JavaScript (if needed) -->
+    <script src="../../public/profile.js"></script>
+</body>
+</html>

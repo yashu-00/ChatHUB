@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatHUB - Friends</title>
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="../../public/friends.css">
+    <!-- Link to Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>ChatHUB</h1>
+        <div class="icons">
+            <span class="icon profile-icon" onclick="viewProfile()" title="View Profile"></span>
+            <span class="icon" onclick="searchUsers()" title="Search Users">🔍</span>
+            <span class="icon" onclick="viewFriendRequests()" title="Friend Requests">📬</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <% if (friends.length > 0) { %>
+            <div class="friends-list">
+                <% friends.forEach(friend => { %>
+                    <div class="friend-card" onclick="openChat('<%= friend.id %>','<%= friend.user_name %>')">
+                        <div class="friend-icon">👤</div>
+                        <div class="friend-text">
+                            <h3><%= friend.name %></h3>
+                            <p class="username">@<%= friend.user_name %></p>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="no-friends">
+                <p>You have no friends yet. 😔</p>
+                <button class="add-friends-btn" onclick="addFriends()">Add Friends</button>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Link to External JavaScript -->
+    <script src="../../public/friends.js"></script>
+</body>
+</html>

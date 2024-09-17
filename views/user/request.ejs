@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend Requests</title>
+    <link rel="stylesheet" href="../../public/request.css">
+</head>
+<body>
+    <header>
+        <h1>Search Users</h1>
+        <nav>
+            <a href="/users/friends">Back to Friends</a>
+        </nav>
+    </header>
+    <div class="requests-container">
+        <% if (requests.length > 0) { %>
+            <% requests.forEach(request => { %>
+                <div class="request-item">
+                    <span><%= request['senderUser.user_name'] %></span>
+                    <button class="accept-btn" data-id="<%= request.sender_id %>">Accept</button>
+                    <button class="reject-btn" data-id="<%= request.sender_id %>">Reject</button>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No friend requests at the moment.</p>
+        <% } %>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../../public/request.js"></script>
+</body>
+</html>

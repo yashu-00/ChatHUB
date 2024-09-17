@@ -1,0 +1,219 @@
+/* General Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #1F1F1F;
+    color: #FFF;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+header {
+    background-color: #2E3B4E;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensure the header is above other elements */
+    transition: background-color 0.3s ease-in-out;
+}
+
+
+header:hover {
+    background-color: #1A2634;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #FFF;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    transition: color 0.3s ease-in-out;
+}
+
+header h1:hover {
+    color: #DDD;
+}
+
+.icons {
+    display: flex;
+    gap: 15px;
+}
+
+.icon {
+    font-size: 28px;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+    position: relative;
+}
+
+.icon::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #FFF;
+    transition: width 0.3s ease;
+}
+
+.icon:hover::after {
+    width: 100%;
+}
+
+.icon:hover {
+    color: #AAA;
+    transform: scale(1.1);
+}
+
+/* Profile Icon Styling */
+.profile-icon {
+    background-image: url('./images/profile-icon.png');
+    background-size: cover;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #3A4C68;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.profile-icon:hover {
+    transform: rotate(360deg);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Container and Friend Card Styles */
+.container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.friends-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.friend-card {
+    background-color: #2E3B4E;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.friend-card:hover {
+    box-shadow: 0px 6px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(-10px);
+    animation: pulse 1s infinite;
+}
+
+.friend-icon {
+    font-size: 40px;
+    margin-right: 15px;
+    color: #FFF;
+    transition: color 0.3s ease;
+}
+
+.friend-icon:hover {
+    color: #AAA;
+}
+
+.friend-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: transform 0.3s ease;
+}
+
+.friend-text h3 {
+    margin: 0;
+    font-size: 24px; /* Increased font size */
+    color: #FFF;
+    font-weight: 700; /* Bold text */
+    transition: color 0.3s ease;
+}
+
+.friend-text h3:hover {
+    color: #DDD;
+}
+
+.friend-text .username {
+    font-size: 25px; /* Increased font size */
+    color: #AAA;
+    font-weight: 500; /* Semi-bold text */
+    transition: color 0.3s ease;
+}
+
+.friend-text .username:hover {
+    color: #FFF;
+}
+
+.no-friends {
+    text-align: center;
+    margin-top: 150px;
+    font-size: 24px;
+}
+
+.add-friends-btn {
+    background-color: #2E3B4E;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    font-size: 16px;
+}
+
+.add-friends-btn:hover {
+    background-color: #1A2634;
+    transform: scale(1.05);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .friend-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    .friend-icon {
+        margin-bottom: 2px;
+    }
+    .friend-text h3 {
+        font-size: 18px;
+    }
+    .friend-text .username {
+        font-size: 22px;
+    }
+}
+
+/* Keyframes for pulse animation */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.03);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

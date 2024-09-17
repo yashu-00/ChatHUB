@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile of <%= friendFullName %></title>
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="../../public/friendProfile.css">
+</head>
+
+<body>
+    <header>
+        <h1>Profile of <%= friendFullName %></h1>
+    </header>
+
+    <div class="profile-container">
+        <div class="profile-avatar">
+            <% if (friendImage) { %>
+                <img src="../../uploads/<%= friendImage %>" alt="<%= friendFullName %>'s profile picture" class="avatar-image">
+            <% } else { %>
+                <div class="avatar-circle">
+                    <div class="initials"><%= friendFullName.charAt(0) %></div>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Profile Information -->
+        <div class="profile-info">
+            <h2><%= friendFullName %></h2>
+            <p><strong>Username:</strong> @<%= friendUserName %></p>
+        </div>
+
+        <!-- Remove Friend Button -->
+        <form action="/friends/remove-friend/<%= friendId %>" method="POST">
+            <button type="submit" class="remove-friend-btn">Remove Friend</button>
+        </form>
+    </div>
+
+    <!-- Optional Background Banner -->
+    <div class="background-banner"></div>
+</body>
+
+</html>

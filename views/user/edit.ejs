@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="../../public/edit.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Your Profile</h1>
+        
+        <% if (message.length > 0) { %>
+            <div class="alert">
+                <%= message %>
+            </div>
+        <% } %>
+
+        <form action="/users/updateProfile" method="post" enctype="multipart/form-data">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="<%= user.name %>" placeholder="Enter your name" required>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="<%= user.user_name %>" placeholder="Enter your username" required>
+
+            <label for="number">Number:</label>
+            <input type="text" id="number" name="number" value="<%= user.number %>" placeholder="Enter your number" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="<%= user.email %>" placeholder="Enter your email" required>
+
+            <!-- Add a file input for uploading profile image -->
+            <label for="image">Profile Image:</label>
+            <input type="file" id="image" name="image" accept="image/*">
+
+            <button type="submit">Update Profile</button>
+        </form>
+        
+        <div class="additional-links">
+            <a href="/users/profile">Back to Profile</a>
+        </div>
+    </div>
+</body>
+</html>

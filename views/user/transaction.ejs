@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History</title>
+    <link rel="stylesheet" href="../../public/transaction.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-money-check-alt"></i> Transaction History</h1>
+        <nav>
+            <a href="/users/profile"><i class="fas fa-arrow-left"></i> Back to Profile</a>
+        </nav>
+    </header>
+    <main>
+        <div class="transactions-container">
+            <% if (transactions.length > 0) { %>
+                <ul class="transactions-list">
+                    <% transactions.forEach(transaction => { %>
+                        <li class="transaction-item">
+                            <div class="user-info">
+                                <% if (transaction.image) { %>
+                                    <img src="../../uploads/<%= transaction.image %>" alt="<%= transaction.name %>'s profile picture" class="user-image">
+                                <% } else { %>
+                                    <div class="user-initials">
+                                        <%= transaction.name.charAt(0).toUpperCase() %>
+                                    </div>
+                                <% } %>
+                                <div class="user-details">
+                                    <p><strong>Name:</strong> <%= transaction.name %></p>
+                                    <p><strong>Username:</strong> @<%= transaction.user_name %></p>
+                                </div>
+                            </div>
+                            <div class="transaction-details">
+                                <p><strong>Amount:</strong> $<%= transaction.amount.toFixed(2) %></p>
+                                <p><strong>Date:</strong> <%= new Date(transaction.paymentDate).toLocaleDateString() %> <%= new Date(transaction.paymentDate).toLocaleTimeString() %></p>
+                            </div>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <div class="no-transactions">
+                    <i class="fas fa-info-circle"></i>
+                    <p>No transactions found.</p>
+                </div>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" href="../../public/otp.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>OTP Verification</h1>
+        <p class="info-message">An OTP has been sent to your email. Please enter it below to verify your account.</p>
+        <% if (message && message.length > 0) { %>
+            <div class="alert">
+                <%= message %>
+            </div>
+        <% } %>
+        <form action="/auth/otp" method="POST" id="otpForm" >
+            <label for="otp">Enter OTP:</label>
+            <input type="text" id="otp" name="otp" required>
+            <img src=<%= imagepath %> alt="CAPTCHA IMAGE">
+            <input type="text" id="captcha" name="captcha" placeholder="Enter the above text" required>
+            <button type="submit" id="submitBtn">Verify OTP</button>
+        </form>
+    </div>
+</body>
+<script>
+    
+</script>
+</html>

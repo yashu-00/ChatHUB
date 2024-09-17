@@ -1,0 +1,161 @@
+/* Reset some default styles */
+body, h1, form, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body and container styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #1F1F1F;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #2E3B4E;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: slideIn 0.8s ease-in-out, fadeIn 1s ease-in-out;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #FFF;
+    font-weight: 500;
+    font-size: 28px;
+    animation: scaleUp 0.6s ease-in-out;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #FFF;
+    text-align: left;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-in-out forwards;
+    animation-delay: 0.5s;
+}
+
+input {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #4a5d6f;
+    border-radius: 4px;
+    background-color: #2E3B4E;
+    color: #FFF;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-in-out forwards;
+    animation-delay: 0.6s;
+    transition: border-color 0.3s, background-color 0.3s, transform 0.2s;
+}
+
+input::placeholder {
+    color: #9aafc2;
+}
+
+input:focus {
+    border-color: #007bff;
+    background-color: #1F1F1F;
+    transform: scale(1.02);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: #FFF;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-in-out forwards;
+    animation-delay: 0.7s;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color: #004099;
+    animation: buttonClick 0.3s ease-in-out;
+}
+
+.additional-links {
+    margin-top: 20px;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.forgot-password-btn {
+    background-color: #ff6f61;
+    color: #FFF;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.forgot-password-btn:hover {
+    background-color: #e0554a;
+    transform: scale(1.05);
+}
+
+.additional-links a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.additional-links a:hover {
+    color: #0056b3;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); }
+    to { transform: translateY(0); }
+}
+
+@keyframes scaleUp {
+    from { transform: scale(0.8); }
+    to { transform: scale(1); }
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes buttonClick {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}

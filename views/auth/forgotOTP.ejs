@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" href="../../public/otp.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <h1>OTP Verification</h1>
+        <p class="info-message">An OTP has been sent to your email. Please enter it below to change your account password.</p>
+        <% if (message && message.length > 0) { %>
+            <div class="alert">
+                <%= message %>
+            </div>
+        <% } %>
+        <form action="/auth/forgotOTP" method="POST" id="otpForm">
+            <label for="otp">Enter OTP:</label>
+            <input type="text" id="otp" name="otp" required>
+
+            <button type="submit" id="submitBtn">Verify OTP</button>
+        </form>
+    </div>
+</body>
+</html>

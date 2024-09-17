@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with <%= friendUserName %>
+    </title>
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="../../public/chat.css">
+    <!-- Link to Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body>
+    <header>
+        <button id="back-btn" title="Back">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <h1>Chat with <%= friendUserName %>
+        </h1>
+        <button id="profile-btn" title="View Profile">
+            <img src="../../public/images/profile-icon.png" alt="Profile Icon">
+        </button>
+    </header>
+
+    <div class="chat-container">
+        <div id="chat-box" class="chat-box">
+            <!-- Messages will be dynamically loaded here -->
+        </div>
+
+        <div class="message-input">
+            <button id="send-money-btn" title="Send Money">
+                <i class="material-icons">attach_money</i> <!-- Replace with appropriate icon -->
+            </button>
+            <input type="text" id="message" placeholder="Type a message..." autocomplete="off">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+    <div id="send-money-dialog" class="dialog">
+        <div class="dialog-content">
+            <h2>Send Money</h2>
+            <input type="number" id="money-amount" placeholder="Enter amount" min="0">
+            <button id="pay-btn">Pay</button>
+            <button id="close-dialog-btn">Cancel</button>
+        </div>
+    </div>
+    <!-- Add the context menu container in your HTML body -->
+    <div id="context-menu">
+        <ul>
+            <!-- Options will be dynamically populated -->
+        </ul>
+    </div>
+
+
+    <!-- Link to External JavaScript -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Get elements
+        const messageInput = document.getElementById('message');
+        const sendBtn = document.getElementById('send-btn');
+        const chatBox = document.getElementById('chat-box');
+        const profileBtn = document.getElementById('profile-btn');
+        const backBtn = document.getElementById('back-btn');
+
+        // Get friend information from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const friendUserName = urlParams.get('username');
+
+        // Get the current user's username (assuming you have this stored somewhere, e.g., in a global variable)
+        const currentUserName = '<%= currentUser %>';
+
+        // Redirect to friend's profile page when the profile button is clicked
+        profileBtn.addEventListener('click', () => {
+            window.location.href = `/friends/profile/${friendUserName}`;
+        });
+
+        // Go back when the back button is clicked
+        backBtn.addEventListener('click', () => {
+            window.location.href = '/users/friends';
+        });
+
+
+        // Notify the server about the current user joining
+        socket.emit('join', currentUserName, friendUserName);
+        console.log(currentUserName)
+
+        socket.once('loadMessages', (chatHistory) => {
+            chatHistory.forEach(msg => {
+                // Ensure msg.id contains the correct message ID
+                addMessageToChatBox(msg.sender === currentUserName ? 'user' : 'friend', msg.content, msg.id);
+            });
+        });
+
+
+        // Send message when "Send" button is clicked
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Send message when Enter key is pressed
+        messageInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default behavior (new line in input)
+                sendMessage();
+            }
+        });
+        socket.on('messageUnsent', (data) => {
+            const { messageId } = data;
+
+            // Remove the message from the chat box for both the user and the friend
+            console.log('Message ID:', messageId);
+            const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (messageElement) {
+                messageElement.remove();
+            }
+        });
+
+        socket.on('receiveMessage', (data) => {
+            if ((data.from === friendUserName && data.to === currentUserName) ||
+                (data.from === currentUserName && data.to === friendUserName)) {
+                // Ensure data.id contains the correct message ID
+                addMessageToChatBox(data.from === currentUserName ? 'user' : 'friend', data.message, data.id);
+            }
+        });
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message !== '') {
+                const data = { from: currentUserName, to: friendUserName, message: message };
+                socket.emit('sendMessage', data);
+                messageInput.value = '';
+            }
+        }
+
+        function addMessageToChatBox(sender, message, messageId) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', `${sender}-message`);
+
+            // Ensure messageId is not undefined or null
+            if (messageId) {
+                messageElement.setAttribute('data-message-id', messageId);
+            }
+
+            const contentElement = document.createElement('div');
+            contentElement.classList.add('content');
+            contentElement.textContent = message;
+
+            messageElement.appendChild(contentElement);
+            chatBox.appendChild(messageElement);
+
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the bottom
+        }
+
+
+        // Get dialog elements
+        const sendMoneyBtn = document.getElementById('send-money-btn');
+        const sendMoneyDialog = document.getElementById('send-money-dialog');
+        const closeDialogBtn = document.getElementById('close-dialog-btn');
+        const payBtn = document.getElementById('pay-btn');
+        const moneyAmountInput = document.getElementById('money-amount');
+
+        // Show dialog when "Send Money" button is clicked
+        sendMoneyBtn.addEventListener('click', () => {
+            sendMoneyDialog.style.display = 'flex';
+        });
+
+        // Close dialog when "Cancel" button is clicked
+        closeDialogBtn.addEventListener('click', () => {
+            sendMoneyDialog.style.display = 'none';
+        });
+
+        // Handle payment when "Pay" button is clicked
+        payBtn.addEventListener('click', async () => {
+            const amount = moneyAmountInput.value.trim();
+            if (amount && parseFloat(amount) > 0) {
+                try {
+                    const response = await fetch('/friends/pay', { // Adjust the URL to match your server route
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            amount: parseFloat(amount),  // Send the payment amount
+                            to: friendUserName,           // Send the friend's username
+                            from: currentUserName         // Send the current user's username
+                        }),
+                    });
+
+                    if (response.ok) {
+                        const { id, url } = await response.json();
+                        if (url) {
+                            // Redirect to Stripe's checkout page
+                            window.location.href = url;
+                        } else {
+                            alert('Failed to retrieve the checkout URL.');
+                        }
+                    } else {
+                        alert('Payment failed. Please try again.');
+                    }
+                } catch (error) {
+                    alert('An error occurred. Please try again.');
+                    console.error('Payment error:', error);
+                }
+            } else {
+                alert('Please enter a valid amount');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const contextMenu = document.getElementById('context-menu');
+            const chatBox = document.getElementById('chat-box');
+            let timeoutId = null; // For detecting long press
+
+            // Event listener for long press or right click on message content
+            chatBox.addEventListener('contextmenu', handleRightClick);
+            chatBox.addEventListener('touchstart', handleLongPressStart);
+            chatBox.addEventListener('touchend', handleLongPressEnd);
+
+            // Function to handle long press start
+            function handleLongPressStart(event) {
+                const target = event.target.closest('.content');
+                if (!target) return;
+
+                timeoutId = setTimeout(() => {
+                    showContextMenu(event, target);
+                }, 500); // Long press duration (500ms)
+            }
+
+            // Function to handle long press end
+            function handleLongPressEnd() {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+            }
+
+            // Function to handle right-click (context menu) on message content
+            function handleRightClick(event) {
+                event.preventDefault();
+                const target = event.target.closest('.content');
+                if (target) {
+                    showContextMenu(event, target);
+                } else {
+                    hideContextMenu();
+                }
+            }
+
+            function showContextMenu(event, target) {
+                const messageElement = target.closest('.message');
+                const isUserMessage = messageElement.classList.contains('user-message');
+                const messageId = messageElement.getAttribute('data-message-id');;
+
+                // Clear the context menu
+                contextMenu.querySelector('ul').innerHTML = '';
+
+                // Add context menu options
+                addContextMenuOption('Delete Message', () => handleDeleteMessage(messageId));
+                if (isUserMessage) {
+                    addContextMenuOption('Unsend Message', () => handleUnsendMessage(messageId));
+                }
+
+                // Get chatBox dimensions
+                const chatBoxRect = chatBox.getBoundingClientRect();
+
+                // Get message position
+                const targetRect = target.getBoundingClientRect();
+
+                const menuHeight = contextMenu.offsetHeight || 120;  // Fallback height estimate
+                const menuWidth = contextMenu.offsetWidth || 150;    // Fallback width estimate
+                const windowHeight = window.innerHeight;
+                const windowWidth = window.innerWidth;
+
+                // Calculate initial click positions
+                let clickX = event.pageX + 20;
+                let clickY = event.pageY + 10;
+
+                // Adjust X position if the menu overflows to the right
+                if (clickX + menuWidth > windowWidth) {
+                    clickX = windowWidth - menuWidth - 20;  // 10px padding from the edge
+                }
+
+                // Adjust Y position if the menu overflows vertically
+                if (clickY + menuHeight > windowHeight) {
+                    clickY = windowHeight - menuHeight - 40;  // 10px padding from the edge
+                }
+
+                // Set the position of the context menu
+                contextMenu.style.left = `${clickX}px`;
+                contextMenu.style.top = `${clickY}px`;
+                contextMenu.style.display = 'block';
+
+                // Hide context menu if clicked elsewhere
+                document.addEventListener('click', hideContextMenu);
+            }
+
+
+            // Function to add an option to the context menu
+            function addContextMenuOption(text, action) {
+                const li = document.createElement('li');
+                li.textContent = text;
+                li.addEventListener('click', action);
+                contextMenu.querySelector('ul').appendChild(li);
+            }
+
+            // Function to hide the context menu
+            function hideContextMenu() {
+                contextMenu.style.display = 'none';
+                document.removeEventListener('click', hideContextMenu);
+            }
+
+            // async function handleUnsendMessage(messageId) {
+            //     try {
+            //         console.log(messageId);
+
+            //         const response = await fetch(`/friends/msg/delete`, {
+            //             method: 'PUT',
+            //             headers: {
+            //                 'Content-Type': 'application/json',
+            //             },
+            //             body: JSON.stringify({
+            //                 messageId: messageId,
+            //                 friendUserName: friendUserName,  // Send the friend's username
+            //             }),
+            //         });
+
+            //         const result = await response.json();
+
+            //         if (response.ok && result.success) {
+            //             // Remove the message locally from the current user's chat box
+            //             document.querySelector(`[data-message-id="${messageId}"]`).remove();
+
+            //             // Emit the 'unsendMessage' event to notify the friend
+            //             socket.emit('unsendMessage', { messageId, friendUserName, currentUserName });
+            //         } else {
+            //             alert(result.message || 'Failed to unsend the message.');
+            //         }
+            //     } catch (error) {
+            //         console.error('Error unsending message:', error);
+            //         alert('An error occurred. Please try again.');
+            //     }
+            // }
+
+            async function handleUnsendMessage(messageId) {
+                try {
+                    console.log(messageId)
+                    const response = await fetch(`/friends/msg/delete`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            messageId: messageId,
+                            friendUserName: friendUserName // Send the friend's username
+                        }),
+                    });
+
+                    const result = await response.json(); // Parse the JSON response
+
+                    if (response.ok && result.success) {
+                        // Remove the message from the chat box
+                        document.querySelector(`[data-message-id="${messageId}"]`).remove();
+                    } else {
+                        alert(result.message || 'Failed to unsend the message.');
+                    }
+                } catch (error) {
+                    console.error('Error unsending message:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            }
+        });
+
+        async function handleDeleteMessage(messageId) {
+            try {
+                const response = await fetch(`/friends/msg`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messageId: messageId,
+                        friendUserName: friendUserName // Send the friend's username
+                    }),
+                });
+
+                const result = await response.json(); // Parse the JSON response
+
+                if (response.ok && result.success) {
+                    // Remove the message from the chat box
+                    document.querySelector(`[data-message-id="${messageId}"]`).remove();
+                } else {
+                    alert(result.message || 'Failed to delete the message.');
+                }
+            } catch (error) {
+                console.error('Error deleting message:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+    </script>
+</body>
+
+</html>
